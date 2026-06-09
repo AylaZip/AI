@@ -1,6 +1,7 @@
 from Enums import States, Location, Action, LocationState
 
 type LocationMap = dict[Location, States]
+locations = [Location.A, Location.B, Location.C, Location.D]
 
 # USED FOR HOMEWORK 2
 
@@ -14,7 +15,9 @@ base_environment = EnvironmentClass(
     current_location=Location.A,
     states={
         Location.A: States.DIRTY,
-        Location.B: States.DIRTY
+        Location.B: States.DIRTY,
+        Location.C: States.DIRTY,
+        Location.D: States.DIRTY
     }
 )
 
@@ -23,7 +26,9 @@ class StatefulReflexAgent:
     def __init__(self):
         self.model: LocationMap = {
             Location.A: States.UNKNOWN,
-            Location.B: States.UNKNOWN
+            Location.B: States.UNKNOWN,
+            Location.C: States.UNKNOWN,
+            Location.D: States.UNKNOWN
         }  # Initially ignorant
 
         self.state: LocationState = (Location.UNKNOWN, States.UNKNOWN)
@@ -37,7 +42,7 @@ class StatefulReflexAgent:
             return Action.SUCK
 
         # Rule 2: If all locations are clean then NO_OP
-        if self.model[Location.A] == self.model[Location.B] == States.CLEAN:
+        if self.model[Location.A] == self.model[Location.B] == self.model[Location.C] == self.model[Location.D] == States.CLEAN:
             return Action.NO_OP
 
         # Rule 3: If location is Clean then move to the next location
@@ -45,6 +50,18 @@ class StatefulReflexAgent:
             return Action.RIGHT
 
         if percept[0] == Location.B:
+            if self.model[Location.A] == States.UNKNOWN:
+                return Action.LEFT
+            else:
+                return Action.RIGHT
+        
+        if percept[0] == Location.C:
+            if self.model[Location.B] == States.UNKNOWN:
+                return Action.LEFT
+            else:
+                return Action.RIGHT
+        
+        if percept[0] == Location.D:
             return Action.LEFT
 
         return Action.NO_OP
@@ -66,9 +83,11 @@ class StatefulReflexAgent:
         if requested_action == Action.SUCK:
             environment.states[location] = States.CLEAN
         elif requested_action == Action.RIGHT:
-            environment.current_location = Location.B
+            idx = locations.index(location)
+            environment.current_location = locations[idx + 1]
         elif requested_action == Action.LEFT:
-            environment.current_location = Location.A
+            idx = locations.index(location)
+            environment.current_location = locations[idx - 1]
 
     def act(self, environment: EnvironmentClass) -> Action:
         percept = self.sensors(environment)

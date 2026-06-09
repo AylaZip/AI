@@ -1,7 +1,9 @@
 import random
+import sys, os
 from typing import Self, override
 
-from Lab4.framework.ga import Individual, genetic_algorithm
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from framework.ga import Individual, genetic_algorithm
 
 
 ##########################
@@ -28,11 +30,20 @@ class NumberIndividual(Individual):
         enumerate(reversed((1, 1, 0))) -> [(0, 0), (1, 1), (2, 1)]
         """
 
-        raise NotImplementedError("Your task is to fix this: Fitness function should be implemented in NumberIndividual class.")
+        #raise NotImplementedError("Your task is to fix this: Fitness function should be implemented in NumberIndividual class.")
+        value = 0
+        for i, bit in enumerate(reversed(self.gene)):
+            value += bit * (2 ** i)
+        return float(value)
 
     @override
     def mutate(self) -> Self:
-        raise NotImplementedError("Your task is to fix this: Mutation should be implemented in NumberIndividual class.")
+        #raise NotImplementedError("Your task is to fix this: Mutation should be implemented in NumberIndividual class.")
+        gene_list = list(self.gene)
+        idx = random.randint(0, len(gene_list) - 1)
+        gene_list[idx] = 1 - gene_list[idx]
+        return NumberIndividual(tuple(gene_list))
+
 
     @override
     def reproduce(self, other: Self) -> Self:
@@ -40,7 +51,10 @@ class NumberIndividual(Individual):
        Reproduce this individual with another with single-point crossover
        Return the child individual
        """
-        raise NotImplementedError("Your task is to fix this: Reproduction should be implemented in NumberIndividual class.")
+        #raise NotImplementedError("Your task is to fix this: Reproduction should be implemented in NumberIndividual class.")
+        crossover = random.randint(1, len(self.gene) - 1)
+        child_gene = self.gene[:crossover] + other.gene[crossover:]
+        return NumberIndividual(child_gene)
 
     def __hash__(self):
         return hash(self.gene)

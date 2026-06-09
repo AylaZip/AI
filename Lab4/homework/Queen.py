@@ -1,8 +1,11 @@
 import random
 import time
-
-from Lab4.framework.ga import Individual
+import sys, os
 from typing import Self
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from framework.ga import Individual, genetic_algorithm
+from homework.queens_fitness import fitness_fn_negative
 
 p_mutation = 0.5
 p_value_mutation = 0.5
@@ -33,14 +36,18 @@ class Board(Individual):
         self.gene = gene
 
     def get_fitness(self) -> float:
-        # Hint: queens_fitness.py
-        raise NotImplementedError("Your homework is to fix this: get_fitness should be implemented in Queen.py.")
+        return float(fitness_fn_negative(self.gene) + 28)
 
     def mutate(self) -> Self:
-        raise NotImplementedError("Your homework is to fix this: mutate should be implemented in Queen.py.")
+        gene_list = list(self.gene)
+        idx = random.randint(0, len(gene_list) - 1)
+        gene_list[idx] = random.randint(1, len(gene_list))
+        return Board(tuple(gene_list))
 
     def reproduce(self, other: Self) -> Self:
-        raise NotImplementedError("Your homework is to fix this: reproduce should be implemented in Queen.py.")
+        crossover = random.randint(1, len(self.gene) - 1)
+        child_gene = self.gene[:crossover] + other.gene[crossover:]
+        return Board(child_gene)
 
     def __hash__(self):
         return hash(self.gene)
@@ -61,7 +68,10 @@ def get_initial_population(count: int) -> set[Board]:
     Randomly generate count individuals of 8 queens on a board.
     Note since it uses a set it disregards duplicate elements.
     """
-    raise NotImplementedError("Your homework is to fix this: get_initial_population should be implemented in Queen.py.")
+    out: set[Board] = set()
+    while len(out) < count:
+        out.add(Board.create_random())
+    return out
 
 
 def test():
@@ -69,14 +79,20 @@ def test():
 
 
 def main():
-    minimal_fitness = 0
+    minimal_fitness = 28
 
     initial_population = get_initial_population(8)
 
     start_time = time.perf_counter_ns()
-    fittest = None # call the genetic algorithm function here with the correct parameters
+    fittest = genetic_algorithm(initial_population, minimal_fitness,
+                                num_of_generations, should_trim_population=True)
     end_time = time.perf_counter_ns()
-    print(f"Fittest Individual: {fittest} - fitness: {fittest.get_fitness()}")
+
+    if fittest:
+        print(f"Fittest Individual: {fittest} - fitness: {fittest.get_fitness()}")
+    else:
+        print("No solution found")
+
     elapsed_time = (end_time - start_time) / 10 ** 6
     print(f"total elapsed time: {elapsed_time} ms")
 

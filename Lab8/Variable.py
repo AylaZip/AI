@@ -107,19 +107,24 @@ class Variable(object):
         return res
 
     def calculate_marginal_probability(self):
-        """ calculates and stores the marginal probabilities of this node.
-            this function should be called before any other calculation is done.
-        """
-
-        # return, if already done
         if self.ready:
             return
 
-        # TODO: COMPLETE THIS FUNCTION
-        # Set self.marginal_probabilities
-        raise NotImplementedError("calculate_marginal_probability not implemented yet.")
+        import itertools
 
-        # set this Node`s state to ready
+        for i in range(len(self.marginal_probabilities)):
+            total = 0.0
+            if not self.parents:
+                total = self.probability_table[()][i]
+            else:
+                parent_assign_lists = [list(p.assignments.keys()) for p in self.parents]
+                for parent_vals in itertools.product(*parent_assign_lists):
+                    parent_prob = 1.0
+                    for j, p in enumerate(self.parents):
+                        parent_prob *= p.get_marginal_probability(parent_vals[j])
+                    total += self.probability_table[parent_vals][i] * parent_prob
+            self.marginal_probabilities[i] = total
+
         self.ready = True
 
     def get_marginal_probability(self, val: str) -> float:

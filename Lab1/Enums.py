@@ -27,6 +27,8 @@ class Action(Enum):
 class Location(Enum):
     A = auto()
     B = auto()
+    C = auto()
+    D = auto()
     UNKNOWN = auto()
 
     def allowed_moves(self) -> tuple[Action, ...]:
@@ -34,6 +36,10 @@ class Location(Enum):
         if self == Location.A:
             return Action.RIGHT, *always_allowed  # * provides Tuple unpacking, which we directly pack back into a tuple alongside Action.RIGHT
         if self == Location.B:
+            return Action.LEFT, Action.RIGHT, *always_allowed
+        if self == Location.C:
+            return Action.LEFT, Action.RIGHT, *always_allowed
+        if self == Location.D:
             return Action.LEFT, *always_allowed
         return always_allowed
 

@@ -73,40 +73,53 @@ def inclusive_range(a: int, b: int) -> range:
 
 def compute_forward(states: ndarray, observations: list[int | None], a_transitions: ndarray,
                     b_emissions: ndarray[float]) -> float:
-    # number of states - subtract two because "initial" and "final" doesn't count.
     big_n = len(states) - 2
-
-    # number of observations - subtract one, because a dummy "None" is added on index 0.
     big_t = len(observations) - 1
+    qf = big_n + 1
 
-    # final state
-    qf: int = big_n + 1
+    forward = np.ones((big_n + 2, big_t + 1)) * 5
 
-    # probability matrix - all values initialized to 5, as 0 has meaning in the matrix
-    forward: ndarray = np.ones((big_n + 2, big_t + 1)) * 5
+    for j in inclusive_range(1, big_n):
+        forward[j][1] = a_transitions[0][j] * b_emissions[j][observations[1]]
 
-    raise NotImplementedError("compute_forward is not finished")
+    for t in inclusive_range(2, big_t):
+        for j in inclusive_range(1, big_n):
+            s = 0.0
+            for i in inclusive_range(1, big_n):
+                s += forward[i][t - 1] * a_transitions[i][j]
+            forward[j][t] = s * b_emissions[j][observations[t]]
+
+    prob = 0.0
+    for i in inclusive_range(1, big_n):
+        prob += forward[i][big_t] * a_transitions[i][qf]
+
+    return prob
 
 
 def compute_viterbi(states: ndarray, observations: list[int | None], a_transitions: ndarray, b_emissions: ndarray):
-    # number of states - subtract two because "initial" and "final" doesn't count.
     big_n = len(states) - 2
-
-    # number of observations - subtract one, because a dummy "None" is added on index 0.
     big_t = len(observations) - 1
-
-    # final state
     qf = big_n + 1
 
-    # probability matrix - all values initialized to 5, as 0 is valid value in matrix
     viterbi = np.ones((big_n + 2, big_t + 1)) * 5
-
-    # Must be of type int, otherwise it is tricky to use its elements to index
-    # the states
-    # all values initialized to 5, as 0 is valid value in matrix
     backpointers = np.ones((big_n + 2, big_t + 1), dtype=int) * 5
 
-    raise NotImplementedError("Compute viterbi is not finished")
+    for j in inclusive_range(1, big_n):
+        viterbi[j][1] = a_transitions[0][j] * b_emissions[j][observations[1]]
+        backpointers[j][1] = 0
+
+    for t in inclusive_range(2, big_t):
+        for j in inclusive_range(1, big_n):
+            best_i = argmax([(i, viterbi[i][t - 1] * a_transitions[i][j]) for i in inclusive_range(1, big_n)])
+            viterbi[j][t] = viterbi[best_i][t - 1] * a_transitions[best_i][j] * b_emissions[j][observations[t]]
+            backpointers[j][t] = best_i
+
+    best_last = argmax([(i, viterbi[i][big_t] * a_transitions[i][qf]) for i in inclusive_range(1, big_n)])
+    path = [best_last]
+    for t in range(big_t, 1, -1):
+        path.insert(0, backpointers[path[0]][t])
+
+    return path
 
 
 def argmax(sequence: list[tuple[float, float]]):

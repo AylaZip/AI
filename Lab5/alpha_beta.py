@@ -18,7 +18,7 @@ def alpha_beta_decision(state: Piles) -> list[int]:
             expected_value = max(expected_value, min_value(successor, alpha, beta))
             if expected_value >= beta:
                 return expected_value
-            alpha = min(alpha, expected_value)
+            alpha = max(alpha, expected_value)
         return expected_value
 
     def min_value(state_option: Piles, alpha: float, beta: float) -> int:
@@ -30,48 +30,45 @@ def alpha_beta_decision(state: Piles) -> list[int]:
             v = min(v, max_value(successor, alpha, beta))
             if v <= alpha:
                 return v
-            beta = max(beta, v)
+            beta = min(beta, v)
         return v
 
     state = argmax(
         successors_of(state),
-        lambda a: min_value(a, infinity, -infinity)
+        lambda a: min_value(a, -infinity, infinity)
     )
     return state
 
 
+PLAY_FOR_MIN = False
+
+
 def is_terminal(state: Piles) -> bool:
-    """
-    Takes in a state and returns True if the state is terminal, False otherwise.
-    A state is terminal if all piles are of size 1 or 2
-    """
-    raise NotImplementedError("Implement this function")
+    return all(pile <= 2 for pile in state)
 
 
 def utility_of(state: Piles) -> int:
-    """
-    Takes in a terminal state and outputs +1 if the computer has won, -1 if the player has won
-    And 0 if the state is not terminal.
-    The player makes the first move, and the game starts with 1 pile.
-    """
-    raise NotImplementedError("Implement this function")
+    if len(state) % 2 == 0:
+        return 1 if PLAY_FOR_MIN else -1
+    else:
+        return -1 if PLAY_FOR_MIN else 1
 
 
 def successors_of(state: Piles) -> list[Piles]:
-    """
-    Given a state, returns a list of all possible states that can be reached from the input state.
-    A move consists of splitting a single pile. The successors are the states that can be reached after one move.
-    """
-    raise NotImplementedError("Implement this function")
+    out = []
+    for i, pile in enumerate(state):
+        if pile >= 3:
+            for split in split_pile_options(pile):
+                new_state = state[:i] + split + state[i + 1:]
+                out.append(new_state)
+    return out
 
 
 def split_pile_options(pile: int) -> list[Piles]:
-    """
-    Given a pile, returns a list of all possible splits.
-    Since the pile can only be split once, all output lists will have 2 elements.
-    The pile split must not result in two piles of the same size.
-    """
-    raise NotImplementedError("Implement this function")
+    out = []
+    for i in range(1, (pile + 1) // 2):
+        out.append([i, pile - i])
+    return out
 
 
 def argmax(iterable: Iterable, func: Callable[[Piles], int]):
@@ -132,5 +129,20 @@ def main():
     print("    Final state is {}".format(state))
 
 
+def main_min():
+    global PLAY_FOR_MIN
+    PLAY_FOR_MIN = True
+    state = [7]
+
+    while not is_terminal(state):
+        state = computer_select_pile(state)
+        print("The computer (MIN) has split a pile")
+        if not is_terminal(state):
+            state = user_select_pile(state)
+
+    print("    Final state is {}".format(state))
+
+
 if __name__ == '__main__':
     main()
+    # main_min()  # uncomment for homework task 3 (play as MIN)

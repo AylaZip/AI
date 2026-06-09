@@ -71,12 +71,13 @@ class BayesianNetwork(object):
 
         return var.get_marginal_probability(val)
 
-    # values is dictionary
     def get_joint_probability(self, values: dict[str, str]) -> float:
-        """ return the joint probability of the Nodes """
-        # TODO: COMPLETE THIS FUNCTION
-        # Return join probability
-        raise NotImplementedError("get_joint_probability not implemented yet.")
+        prob = 1.0
+        for var in self.variables:
+            var_value = values[var.name]
+            parent_values = tuple(values[p.name] for p in var.parents)
+            prob *= var.get_probability(var_value, parent_values)
+        return prob
 
     def get_conditional_probability(self, values: dict[str, str], evidents: dict[str, str]) -> float:
         """ returns the conditional probability.

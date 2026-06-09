@@ -85,29 +85,25 @@ def print_population(population: Population) -> None:
 
 
 def random_selection(population: Population) -> tuple[Individual, Individual]:
-    """
-    Compute fitness contribution of each individual in population according to the individuals fitness and add up
-    the total. Then choose 2 from sequence based on percentage contribution to
-    total fitness of population.
-    Return selected variable which holds two individuals that were chosen as
-    the mother and the father
-    """
-    # Python sets are randomly ordered. Since we traverse the set twice, we
-    # want to do it in the same order. So let's convert it temporarily to a
-    # list.
+    ordered_population = list(population)
+    fit_sum = sum(i.get_fitness() for i in ordered_population)
 
-    raise NotImplementedError("Your task is to fix this: Random selection has not yet been implemented")
-
-    # mother = pick_individual(fit_sum, ordered_population)
-    # father = pick_individual(fit_sum, ordered_population)
+    mother = pick_individual(fit_sum, ordered_population)
+    father = pick_individual(fit_sum, ordered_population)
 
     return mother, father
 
 
 def pick_individual(total_fitness_sum: float, ordered_population: list[Individual]):
-    """Randomly generate a number for the chosen fitness and pick an individual based on the number."""
+    if total_fitness_sum == 0:
+        return random.choice(ordered_population)
 
-    raise NotImplementedError("Your task is to fix this: Pick individual has not yet been implemented")
+    chosen = random.uniform(0, total_fitness_sum)
+    running = 0.0
+    for individual in ordered_population:
+        running += individual.get_fitness()
+        if running >= chosen:
+            return individual
 
     return ordered_population[-1]
 

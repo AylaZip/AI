@@ -17,8 +17,18 @@ class CSP:
     def backtracking_search(self) -> dict[States, Color] | None:
         return self.recursive_backtracking({})
 
-    def recursive_backtracking(self, assignment: Assignment) -> Dict[States, Color]:
-        raise NotImplementedError("recursive_backtracking should be implemented here")
+    def recursive_backtracking(self, assignment: Assignment) -> dict[States, Color] | None:
+        if self.is_complete(assignment):
+            return assignment
+        var = self.select_unassigned_variable(assignment)
+        for value in self.order_domain_values(var, assignment):
+            if self.is_consistent(var, value, assignment):
+                assignment[var] = value
+                result = self.recursive_backtracking(assignment)
+                if result is not None:
+                    return result
+                del assignment[var]
+        return None
         
 
     def select_unassigned_variable(self, assignment: Assignment) -> States:

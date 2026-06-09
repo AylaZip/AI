@@ -40,38 +40,45 @@ def minmax_decision(state: Board) -> int:
     return action
 
 
+WINNING_LINES = [
+    (0, 1, 2), (3, 4, 5), (6, 7, 8),
+    (0, 3, 6), (1, 4, 7), (2, 5, 8),
+    (0, 4, 8), (2, 4, 6),
+]
+
+
+def _check_win(state: Board, symbol: Symbols) -> bool:
+    return any(all(state[i] == symbol for i in line) for line in WINNING_LINES)
+
+
 def is_terminal(state: Board) -> bool:
-    """
-    returns True if the state is either a win or a tie (board full)
-    :param state: State of the checkerboard.
-    Ex: [Unplaced; Unplaced; Unplaced; Unplaced; X; Unplaced; Unplaced; Unplaced; Unplaced]
-    :return:
-    """
-    raise NotImplementedError("Implement this function")
+    return (
+        _check_win(state, Symbols.X) or
+        _check_win(state, Symbols.O) or
+        all(cell != Symbols.UNPLACED for cell in state)
+    )
 
 
 def utility_of(state: Board) -> int:
-    """
-    returns +1 if winner is X (MAX player), -1 if winner is O (MIN player), or 0 otherwise
-    :param state: State of the checkerboard.
-    Ex: [Unplaced; Unplaced; Unplaced; Unplaced; X; Unplaced; Unplaced; Unplaced; Unplaced]
-    :return:
-    """
-
-    # For this function it might be beneficial to create helper functions to check different aspects of the board.
-    # This can help to avoid making this function overly complicated.
-
-    raise NotImplementedError("Implement this function")
+    if _check_win(state, Symbols.X):
+        return 1
+    if _check_win(state, Symbols.O):
+        return -1
+    return 0
 
 
 def successors_of(state: Board) -> list[tuple[int, Board]]:
-    """
-    returns a list of tuples (move, state) as shown in the exercise slides
-    :param state: State of the checkerboard.
-    Ex: [Unplaced; Unplaced; Unplaced; Unplaced; X; Unplaced; Unplaced; Unplaced; Unplaced]
-    :return:
-    """
-    raise NotImplementedError("Implement this function")
+    x_count = state.count(Symbols.X)
+    o_count = state.count(Symbols.O)
+    player = Symbols.X if x_count == o_count else Symbols.O
+
+    out = []
+    for i, cell in enumerate(state):
+        if cell == Symbols.UNPLACED:
+            new_state = state.copy()
+            new_state[i] = player
+            out.append((i, new_state))
+    return out
 
 
 def display(state: list[Symbols]) -> None:

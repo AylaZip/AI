@@ -1,7 +1,7 @@
 from Enums import States, Location, Action, LocationState
 
 type LocationMap = dict[Location, States]
-
+locations = [Location.A, Location.B, Location.C, Location.D]
 
 # USED FOR EXERCISE 2 & 3 & HOMEWORK 1
 
@@ -15,7 +15,9 @@ base_environment = EnvironmentClass(
     current_location=Location.A,
     states={
         Location.A: States.DIRTY,
-        Location.B: States.DIRTY
+        Location.B: States.DIRTY,
+        Location.C: States.DIRTY,
+        Location.D: States.DIRTY
     }
 )
 
@@ -33,9 +35,11 @@ class Agent:
         if action == Action.SUCK:
             self.environment.states[location] = States.CLEAN
         elif action == Action.RIGHT and action in location.allowed_moves():
-            self.environment.current_location = Location.B
+            idx = locations.index(location)
+            self.environment.current_location = locations[idx + 1]
         elif action == Action.LEFT and action in location.allowed_moves():
-            self.environment.current_location = Location.A
+            idx = locations.index(location)
+            self.environment.current_location = locations[idx - 1]
 
     def evaluate(self) -> Action:
         """:return: The action that the agent has chosen to take. For printing purposes"""
@@ -54,6 +58,10 @@ class Agent:
         if state[0] == Location.A:
             return Action.RIGHT
         if state[0] == Location.B:
+            return Action.RIGHT
+        if state[0] == Location.C:
+            return Action.RIGHT
+        if state[0] == Location.D:
             return Action.LEFT
         return Action.NO_OP
 
