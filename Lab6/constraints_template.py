@@ -43,9 +43,7 @@ class CSP:
         return True
 
     def order_domain_values(self, variable: States, assignment: Assignment) -> list[Color]:
-        all_values = self.domains[variable][:]
-        # shuffle(all_values)
-        return all_values
+        return self.domains[variable][:]
 
     def is_consistent(self, variable: States, value: Color, assignment: Assignment) -> bool:
         if not assignment:
@@ -86,7 +84,6 @@ def create_australia_csp() -> CSP:
 
     
     def constraint_function(first_variable: States, first_value: Color, second_variable: States, second_value: Color) -> bool:
-        """Returns true if neighboring variables have different values."""
         return first_value != second_value or first_variable == second_variable
 
 
@@ -108,5 +105,3 @@ if __name__ == '__main__':
     result = australia.backtracking_search()
     for area, color in sorted(result.items()):
         print("{}: {}".format(area, color))
-
-    # Check at https://mapchart.net/australia.html

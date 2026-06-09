@@ -3,8 +3,6 @@ from Enums import States, Location, Action, LocationState
 type LocationMap = dict[Location, States]
 locations = [Location.A, Location.B, Location.C, Location.D]
 
-# USED FOR HOMEWORK 2
-
 class EnvironmentClass:
     def __init__(self, current_location: Location, states: LocationMap):
         self.current_location = current_location
@@ -28,53 +26,43 @@ class StatefulReflexAgent:
             Location.A: States.UNKNOWN,
             Location.B: States.UNKNOWN,
             Location.C: States.UNKNOWN,
-            Location.D: States.UNKNOWN
-        }  # Initially ignorant
+            Location.D: States.UNKNOWN,
+        }
 
         self.state: LocationState = (Location.UNKNOWN, States.UNKNOWN)
         self.last_action: Action = Action.NO_OP
 
-    def match_rule(self) -> Action:  # Match rule for a given state
+    def match_rule(self) -> Action:
         percept = self.state
-
-        # Rule 1: If location is Dirty then Suck
         if percept[1] == States.DIRTY:
             return Action.SUCK
-
-        # Rule 2: If all locations are clean then NO_OP
         if self.model[Location.A] == self.model[Location.B] == self.model[Location.C] == self.model[Location.D] == States.CLEAN:
             return Action.NO_OP
-
-        # Rule 3: If location is Clean then move to the next location
         if percept[0] == Location.A:
             return Action.RIGHT
-
         if percept[0] == Location.B:
             if self.model[Location.A] == States.UNKNOWN:
                 return Action.LEFT
             else:
                 return Action.RIGHT
-        
         if percept[0] == Location.C:
             if self.model[Location.B] == States.UNKNOWN:
                 return Action.LEFT
             else:
                 return Action.RIGHT
-        
         if percept[0] == Location.D:
             return Action.LEFT
-
         return Action.NO_OP
 
     def update_state(self, percept: LocationState) -> None:
         location, status = percept
-        self.model[location] = status  # Update the model state
+        self.model[location] = status
 
-    def sensors(self, environment: EnvironmentClass) -> tuple[Location, States]:  # Sense Environment
+    def sensors(self, environment: EnvironmentClass) -> tuple[Location, States]:
         location = environment.current_location
         return location, environment.states[location]
 
-    def actuators(self, requested_action: Action, environment: EnvironmentClass) -> None:  # Modify Environment
+    def actuators(self, requested_action: Action, environment: EnvironmentClass) -> None:
         location = environment.current_location
 
         if requested_action not in location.allowed_moves():
@@ -98,25 +86,22 @@ class StatefulReflexAgent:
         return action
 
 
-def run(n):  # run the agent through n steps
-    location_space = 10
-    status_space = 8
-    action_space = 7
+def run(n):
+    loc_w = 10
+    stat_w = 8
+    act_w = 7
     icon = "-> "
 
-    # Setup for the output
-    print(f"{'Current':{location_space + status_space + action_space}s}{icon}{'New':8s}")
-    print(
-        f"{'location':{location_space}s}{'status':{status_space}s}{'action':{action_space}s}{icon}{'location':{location_space}s}{'status':{status_space}s}")
+    print(f"{'Current':{loc_w + stat_w + act_w}s}{icon}{'New':8s}")
+    print(f"{'location':{loc_w}s}{'status':{stat_w}s}{'action':{act_w}s}{icon}{'location':{loc_w}s}{'status':{stat_w}s}")
 
     agent = StatefulReflexAgent()
     for i in range(1, n):
-        (location, status) = agent.sensors(base_environment)  # Sense Environment before action
-        print(f"{location.name:{location_space}s}{status.name:{status_space}s}", end='')
-
+        (location, status) = agent.sensors(base_environment)
+        print(f"{location.name:{loc_w}s}{status.name:{stat_w}s}", end='')
         action = agent.act(base_environment)
-        (location, status) = agent.sensors(base_environment)  # Sense Environment after action
-        print(f"{action.name:{action_space}s}{icon}{location.name:{location_space}s}{status.name:{status_space}s}")
+        (location, status) = agent.sensors(base_environment)
+        print(f"{action.name:{act_w}s}{icon}{location.name:{loc_w}s}{status.name:{stat_w}s}")
 
 
 if __name__ == '__main__':

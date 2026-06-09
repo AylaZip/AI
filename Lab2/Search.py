@@ -1,12 +1,6 @@
 from typing import Self, Any
 
 
-# For this lab we will not be able to fully type the state
-# The reason for this is that we wanted a fairly simple implementation for the searcher.
-# But we still wanted this searcher to be able to handle all 3 different scenarios.
-# Feel free to take it as a challenge to make a strongly typed implementation, that can handle all 3 scenarios.
-# Consider doing something that could let the statespace generate the states, and decide what next possible states are.
-
 class StateSpace:
     def __init__(self, state_space: dict = None):
         self.state_space = state_space
@@ -66,7 +60,6 @@ def insert_all(nodes_to_add: list[Node], queue: list[Node], insert_as_first: boo
 
 
 def remove_first(queue: list[Node]) -> Node:
-    # Hint this function is really short, and you can probably do it in one line
     return queue.pop(0)
 
 
@@ -77,8 +70,6 @@ class Searcher:
         self.state_space = state_space
 
     def tree_search(self, insert_as_first: bool = True) -> list[Node]:
-        """Search the tree for the goal state
-        and return the path from the initial state to the goal state."""
         fringe: list[Node] = []
         initial_node = Node(self.initial_state)
         fringe = insert(initial_node, fringe)
@@ -92,7 +83,6 @@ class Searcher:
                 return node.path()
             children = node.expand(self.state_space)
             fringe = insert_all(children, fringe, insert_as_first)
-            #print(f"Fringe: {fringe}")
 
     def run(self, insert_as_first: bool = True):
         path = self.tree_search(insert_as_first)
@@ -126,11 +116,9 @@ if __name__ == '__main__':
     print("????-first")
     searcher.run(insert_as_first=False)
 
-    # Remember to include NO_OP. By pasting the same state as an option.
     vacuum_space_incomplete = {
         ('A', 'Dirty', 'Dirty'): [('A', 'Clean', 'Dirty'), ('A', 'Dirty', 'Dirty'), ('B', 'Dirty', 'Dirty')],
         ('B', 'Dirty', 'Dirty'): [('B', 'Dirty', 'Clean'), ('B', 'Dirty', 'Dirty'), ('A', 'Dirty', 'Dirty')],
-        # Fill out all possible states as keys to the dictionary
         ('A', 'Dirty', 'Clean'): [('A', 'Clean', 'Clean'), ('A', 'Dirty', 'Clean'), ('B', 'Dirty', 'Clean')],
         ('A', 'Clean', 'Dirty'): [('A', 'Clean', 'Dirty'), ('A', 'Clean', 'Dirty'), ('B', 'Clean', 'Dirty')],
         ('A', 'Clean', 'Clean'): [('A', 'Clean', 'Clean'), ('A', 'Clean', 'Clean'), ('B', 'Clean', 'Clean')],
@@ -140,7 +128,5 @@ if __name__ == '__main__':
     }
 
     searcher2 = Searcher(('A', 'Dirty', 'Dirty'), ('A', 'Clean', 'Clean'), state_space=StateSpace(vacuum_space_incomplete))
-    # print("\nDFS - Vacuum World")
-    # searcher2.run(insert_as_first=True)
     print("\nBFS - Vaccum World")
     searcher2.run(insert_as_first=False)

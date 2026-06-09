@@ -12,24 +12,6 @@ p_value_mutation = 0.5
 num_of_generations = 100
 
 type BoardView = tuple[int, int, int, int, int, int, int, int]
-"""
-The BoardView defines the columns as indices i.e. myboard: Boardview = (1, 2, 1, 4, 3, 6, 7, 8)
-Defines the board:
-1: [x] [ ] [x] [ ] [ ] [ ] [ ] [ ]
-2: [ ] [x] [ ] [ ] [ ] [ ] [ ] [ ]
-3: [ ] [ ] [ ] [ ] [x] [ ] [ ] [ ]
-4: [ ] [ ] [ ] [x] [ ] [ ] [ ] [ ]
-5: [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ]
-6: [ ] [ ] [ ] [ ] [ ] [x] [ ] [ ]
-7: [ ] [ ] [ ] [ ] [ ] [ ] [x] [ ]
-8: [ ] [ ] [ ] [ ] [ ] [ ] [ ] [x]
-"""
-
-##########################
-# Instruction:
-# Run this file directly for the homework.
-#
-##########################
 
 class Board(Individual):
     def __init__(self, gene: BoardView):

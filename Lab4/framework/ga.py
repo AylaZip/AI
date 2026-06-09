@@ -32,7 +32,6 @@ class Individual(ABC):
         return f"Fitness: {self.get_fitness()}"
 
 
-# noinspection DuplicatedCode
 def genetic_algorithm(population: Population,
                       minimal_fitness: float,
                       num_of_generations: int = default_num_of_generations,

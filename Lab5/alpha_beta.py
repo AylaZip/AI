@@ -1,9 +1,6 @@
 from collections.abc import Iterable
 from typing import Callable
 
-# This is based on the game Nim, where each player must in turn select a pile to split.
-# The result of the split must be 2 piles of different sizes
-
 type Piles = list[int]
 
 
@@ -80,10 +77,6 @@ def computer_select_pile(state: Piles) -> Piles:
 
 
 def user_select_pile(list_of_piles: Piles) -> Piles:
-    """
-    Given a list of piles, asks the user to select a pile and then a split.
-    Then returns the new list of piles.
-    """
     print("\n    Current piles: {}".format(list_of_piles))
 
     i = -1
@@ -145,4 +138,4 @@ def main_min():
 
 if __name__ == '__main__':
     main()
-    # main_min()  # uncomment for homework task 3 (play as MIN)
+    # main_min()

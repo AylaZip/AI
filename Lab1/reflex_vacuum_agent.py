@@ -3,8 +3,6 @@ from Enums import States, Location, Action, LocationState
 type LocationMap = dict[Location, States]
 locations = [Location.A, Location.B, Location.C, Location.D]
 
-# USED FOR EXERCISE 2 & 3 & HOMEWORK 1
-
 class EnvironmentClass:
     def __init__(self, current_location: Location, states: LocationMap):
         self.current_location = current_location
@@ -66,38 +64,22 @@ class Agent:
         return Action.NO_OP
 
 
-location_space = 10
-status_space = 8
-action_space = 7
-icon = "-> "
+def run(n: int) -> None:
+    loc_w = 10
+    stat_w = 8
+    act_w = 7
+    icon = "-> "
 
-def print_before_decision(location_name: str, status_name: str) -> None:
-    print(f"{location_name:{location_space}s}{status_name:{status_space}s}", end='')
-
-def print_decision(action_name: str, location_name: str, status_name: str) -> None:
-    print(f"{action_name:{action_space}s}{icon}{location_name:{location_space}s}{status_name:{status_space}s}")
-
-
-def run(n: int) -> None:  # run the agent through n steps
-
+    print(f"{'Current':{loc_w + stat_w + act_w}s}{icon}{'New':8s}")
+    print(f"{'location':{loc_w}s}{'status':{stat_w}s}{'action':{act_w}s}{icon}{'location':{loc_w}s}{'status':{stat_w}s}")
 
     agent = Agent(base_environment)
-
-    # Setup for the output
-    print(f"{'Current':{location_space + status_space + action_space}s}{icon}{'New':8s}")
-    print(
-        f"{'location':{location_space}s}{'status':{status_space}s}{'action':{action_space}s}{icon}{'location':{location_space}s}{'status':{status_space}s}")
-
     for i in range(1, n):
-        (location, status) = agent.sensor()  # Sense Environment before action
-        print_before_decision(location.name, status.name)
-
-        # Run the agent
+        (location, status) = agent.sensor()
+        print(f"{location.name:{loc_w}s}{status.name:{stat_w}s}", end='')
         action = agent.evaluate()
-
-        # Print final result
-        (location, status) = agent.sensor()  # Sense Environment after action
-        print_decision(action.name, location.name, status.name)
+        (location, status) = agent.sensor()
+        print(f"{action.name:{act_w}s}{icon}{location.name:{loc_w}s}{status.name:{stat_w}s}")
 
 
 if __name__ == '__main__':

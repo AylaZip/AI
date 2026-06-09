@@ -1,11 +1,6 @@
 from typing import Self, Any
 import heapq
 
-# For this lab we will not be able to fully type the state
-# The reason for this is that we wanted a fairly simple implementation for the searcher.
-# But we still wanted this searcher to be able to handle all 3 different scenarios.
-# Feel free to take it as a challenge to make a strongly typed implementation, that can handle all 3 scenarios.
-# Consider doing something that could let the statespace generate the states, and decide what next possible states are.
 
 class StateSpace:
     def __init__(self, state_space: dict = None):
@@ -67,7 +62,6 @@ def insert_all(nodes_to_add: list[Node], queue: list[Node], insert_as_first: boo
 
 
 def remove_first(queue: list[Node]) -> Node:
-    # Hint this function is really short, and you can probably do it in one line
     return queue.pop(0)
 
 
