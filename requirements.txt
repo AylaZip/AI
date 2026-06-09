@@ -1,0 +1,7 @@
+numpy>=2
+pandas>=3
+matplotlib>=3
+scipy>=1
+scikit-learn>=1
+pgmpy>=1.1
+seaborn>=0.13
